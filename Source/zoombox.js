@@ -1,5 +1,5 @@
 /**
- * @author Bartek Garbiak
+ * @author Bart Garbiak
  */
 var ZoomBox = new Class({
 
@@ -30,7 +30,7 @@ var ZoomBox = new Class({
                 })
                 .fade('hide')
                 .inject(document.body)
-                .addEvent('click',function(){
+                .addEvent('click', function(){
                     this.close($('zbImage'));
                 }.bind(this));
 
@@ -57,7 +57,7 @@ var ZoomBox = new Class({
             .fade('hide')
             .inject(this.loader,'after');
 
-        this.closer = new Element('a',{
+        this.closer = new Element('a', {
             'class': 'zbClose',
             'html': this.options.lang.close,
             'href': '#'
@@ -76,35 +76,36 @@ var ZoomBox = new Class({
         });
 
         if (this.options.keys) {
-
-            this.keys = new Keyboard({
-                eventType: 'keyup', 
-                events: {
-
-                    'esc': function(){
-                        this.close($('zbImage'));
-                    }.bind(this),
-
-                    'right': function() {
-                        if (this.next)
-                            this.slideTo($('zbImage'), this.next);
-                    }.bind(this),
-
-                    'left': function() {
-                        if (this.prev)
-                            this.slideTo($('zbImage'), this.prev);
-                    }.bind(this)
-                }
-            });
-
-            this.keys.deactivate();
-
+            this.keyboard();
         }
 
         if (this.options.elements)
             this.wrap(this.options.elements);
         else
             this.wrap(this.options.selector);
+    },
+    
+    keyboard: function() {
+        this.keys = new Keyboard({
+            eventType: 'keyup', 
+            events: {
+                'esc': function(){
+                    this.close($('zbImage'));
+                }.bind(this),
+
+                'right': function() {
+                    if (this.next)
+                        this.slideTo($('zbImage'), this.next);
+                }.bind(this),
+
+                'left': function() {
+                    if (this.prev)
+                        this.slideTo($('zbImage'), this.prev);
+                }.bind(this)
+            }
+        });
+
+        this.keys.deactivate();
     },
 
     wrap: function(selector) {
@@ -192,23 +193,28 @@ var ZoomBox = new Class({
 
         var image = new Asset.image(el.get('href'), {
             onload: function() {
-                if (el == this.current)
+                if (el == this.current) {
                     this.zoom(image,el);
+                }
             }.bind(this)
         });
 
         var number = '';
-        if (el.retrieve('index') && el.retrieve('length'))
+        if (el.retrieve('index') && el.retrieve('length')) {
             var number = el.retrieve('index') + '/' + el.retrieve('length');
+        }
 
         var title = el.get('title');
-        if (title == null && el.getElement('img') && el.getElement('img').get('alt'))
+        if (title == null && el.getElement('img') && el.getElement('img').get('alt')) {
             title = el.getElement('img').get('alt');
+        }
 
-        if (title == null)
+        if (title == null) {
             title = '';
-        else if (number)
+        }
+        else if (number) {
             number = number + ':';
+        }
 
         this.caption.getElement('span')
             .set('html', number + ' <strong>' + title + '</strong>')
@@ -232,8 +238,9 @@ var ZoomBox = new Class({
                     this.slideTo(image, this.next);
                 }.bind(this));
         }
-        else 
+        else {
             this.next = null;
+        }
 
         if (el.retrieve('prev')) {
 
@@ -250,8 +257,9 @@ var ZoomBox = new Class({
                     this.slideTo(image, this.prev);
                 }.bind(this));
         }
-        else
+        else {
             this.prev = null;
+        }
 
         if (this.options.back) {
 
@@ -363,8 +371,9 @@ var ZoomBox = new Class({
              }
         }.bind(this)).delay(200);
 
-        if (!Browser.Engine.trident4)
+        if (!Browser.Engine.trident4) {
             this.loader.pin();
+        }
 
         this.loader.fade(0.8);
 
@@ -379,7 +388,7 @@ var ZoomBox = new Class({
             'height': img.getSize().y + 'px'
         });
 
-        (function(){
+        (function() {
             if (Browser.Engine.trident4) {
                 this.loader.setStyles({
                     'top':img.getPosition().y - parseInt(this.loader.getStyle('border-top-width')) + 'px',
@@ -420,27 +429,33 @@ var ZoomBox = new Class({
 
     close: function(img) {
         
-        if (this.options.back)
+        if (this.options.back) {
             this.backdrop.setStyle('display', 'none')
                 .fade('hide')
                 .unpin();
+        }
 
-        if (this.options.keys)
+        if (this.options.keys) {
             this.keys.deactivate();
+        }
 
-        if (this.period)
+        if (this.period) {
             $clear(this.period);
+        }
 
-        if (img)
+        if (img) {
             img.unpin()
                .dispose();
+        }
 
         this.loader.setStyle('background-image', 'none');
 
-        if (this.loader.retrieve('el').getElement('img'))
+        if (this.loader.retrieve('el').getElement('img')) {
             var el = this.loader.retrieve('el').getElement('img');
-        else
+        }
+        else {
             var el = this.loader.retrieve('el');
+        }
 
         this.loader.unpin()
                    .fade(0.5);
@@ -510,15 +525,16 @@ var ZoomBox = new Class({
         }       
     },
 
-    slideTo:function(img, el) {
+    slideTo: function(img, el) {
 
         if (this.options.scroll) {
             var scrollFx = new Fx.Scroll(window);
             scrollFx.start(0, el.getPosition().y - (window.getSize().y /2 - el.getSize().y/2));
         }
 
-        if (this.period)
+        if (this.period) {
             $clear(this.period);
+        }
 
         this.caption.fade('hide')
                     .getElement('span').setStyle('display', 'none')
@@ -527,15 +543,19 @@ var ZoomBox = new Class({
         this.closer.fade('hide')
                    .setStyle('display', 'none');
 
-        if (this.loader.retrieve('el').getElement('img'))
+        if (this.loader.retrieve('el').getElement('img')) {
             var prevEl = this.loader.retrieve('el').getElement('img');
+        }
+        else {
+        	var prevEl = this.loader.retrieve('el');
+        }
 
-        else var prevEl = this.loader.retrieve('el');
-
-        if (el.getElement('img'))
+        if (el.getElement('img')) {
             var t = el.getElement('img');
-        else
+        }
+        else {
             var t = el;
+        }
 
         this.loader.unpin()
                     .setStyles({
