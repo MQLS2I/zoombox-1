@@ -79,10 +79,12 @@ var ZoomBox = new Class({
             this.keyboard();
         }
 
-        if (this.options.elements)
+        if (this.options.elements) {
             this.wrap(this.options.elements);
-        else
+        }
+        else {
             this.wrap(this.options.selector);
+        }
     },
     
     keyboard: function() {
