@@ -1,0 +1,70 @@
+.zbBackground {
+    background: #333;
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:none;
+}
+.zbLoader {
+    position: absolute;
+    border: 2px solid #888;
+    background: #000 url('img/zbLoading.gif') 50% 50% no-repeat;
+}
+.zbCaption {
+    position:absolute;
+    background:#000;
+    display:block;
+    color:#fff;
+}
+.zbCaption span {
+    display:block;
+    width:100%;
+    line-height:20px;
+    padding: 5px 0;
+    text-indent: 10px;
+    position:relative;
+    text-align:center;
+}
+.zbControls {
+    position:absolute;
+    background:transparent;
+    color:#000;
+}
+.zbControls div {
+    position:relative;
+    width: 100%;
+    height: 100%;
+}
+.zbNext, .zbPrev, .zbClose {
+    display:block;
+    width:16px;
+    height:16px;
+    position:absolute;
+    top: 7px;
+    right:8px;
+    overflow:hidden;
+    background: transparent url('img/zbNext.gif') 0 0 no-repeat;
+    text-indent:-999999px;
+}
+.zbNext:hover, .zbPrev:hover {
+    outline:none;
+}
+.zbPrev {
+    right:auto;
+    left:8px;
+    background-image: url('img/zbPrev.gif');
+}
+.zbClose {
+    background-image:url('img/zbClose.gif');
+}
+.zbElements {
+    width: 100px;
+    height: 100px;
+    display:block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -25px;
+    background: transparent;
+    visibility: hidden;
+}
