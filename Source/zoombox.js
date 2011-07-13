@@ -21,56 +21,11 @@ var ZoomBox = new Class({
     },
 
     initialize: function(options) {
-        this.setOptions(options);        
+        this.setOptions(options);
         
-        if (this.options.back) {
+        this.build();
 
-            this.backdrop = new Element('div', {
-                'class': 'zbBackground'
-                })
-                .fade('hide')
-                .inject(document.body)
-                .addEvent('click', function(){
-                    this.close($('zbImage'));
-                }.bind(this));
-
-            window.addEvent('resize', function() {
-                this.backdrop.setStyles({
-                    'width': window.getSize().x + 'px',
-                    'height': window.getSize().y + 'px'
-                });
-            }.bind(this));
-        }
-
-        this.loader = new Element('div', {
-            'class': 'zbLoader',
-            'id': 'zbLoader'
-            })
-            .fade('hide')
-            .inject(document.body);
-
-        this.caption = new Element('figcaption', {
-            'class': 'zbCaption',
-            'id': 'zbCaption',
-            'html': '<span></span>'
-            })
-            .fade('hide')
-            .inject(this.loader,'after');
-
-        this.closer = new Element('a', {
-            'class': 'zbClose',
-            'html': this.options.lang.close,
-            'href': '#'
-            })
-            .fade('hide')
-            .inject(this.caption,'after')
-            .addEvent('click',function(e){
-                var e = new Event(e);
-                e.preventDefault();
-                this.close($('zbImage'));
-            }.bind(this));
-
-        this.fx = new Fx.Morph(this.loader,{
+        this.fx = new Fx.Morph(this.loader, {
             duration:400,
             wait:false
         });
@@ -86,7 +41,7 @@ var ZoomBox = new Class({
             this.wrap(this.options.selector);
         }
     },
-    
+
     keyboard: function() {
         this.keys = new Keyboard({
             eventType: 'keyup', 
@@ -108,6 +63,87 @@ var ZoomBox = new Class({
         });
 
         this.keys.deactivate();
+    },
+
+    build: function() {
+    	if (this.options.back) {
+			this.backdropCreate();
+        }
+
+        this.loader = new Element('div', {
+            'class': 'zbLoader',
+            'id': 'zbLoader'
+            })
+            .fade('hide')
+            .inject(document.body);
+
+        this.caption = new Element('figcaption', {
+            'class': 'zbCaption',
+            'id': 'zbCaption',
+            'html': '<span></span>'
+            })
+            .fade('hide')
+            .inject(this.loader, 'after');
+
+        this.closer = new Element('a', {
+            'class': 'zbClose',
+            'html': this.options.lang.close,
+            'href': '#'
+            })
+            .fade('hide')
+            .inject(this.caption,'after')
+            .addEvent('click',function(e) {
+                var e = new Event(e);
+                e.preventDefault();
+                this.close($('zbImage'));
+            }.bind(this));
+    },
+
+    backdropCreate: function() {
+    	this.backdrop = new Element('div', {
+	        'class': 'zbBackground'
+	        })
+	        .fade('hide')
+	        .inject(document.body)
+	        .addEvent('click', function() {
+	            this.close($('zbImage'));
+	        }.bind(this));
+
+        window.addEvent('resize', function() {
+            this.backdrop.setStyles({
+                width  : window.getSize().x + 'px',
+                height : window.getSize().y + 'px'
+            });
+        }.bind(this));
+    },
+    
+    backdropShow: function() {
+    	if (Browser.Engine.trident4 || !this.backdrop.hasClass('isPinned')) {
+            var scroll = window.getScroll();
+        }
+        else {
+            var scroll = new Hash({
+                x: 0,
+                y: 0
+            });
+        }
+
+        this.backdrop.setStyles({
+            'display': 'block',
+            'width': window.getSize().x + 'px',
+            'height': window.getSize().y + 'px',
+            'top': scroll.y + 'px',
+            'left': scroll.x + 'px'
+        })
+        .fade(0.7)
+        .pin()
+        .addClass('isPinned');
+    }.protect(),
+    
+    backdropHide: function() {
+    	this.backdrop.setStyle('display', 'none')
+            .fade('hide')
+            .unpin();
     },
 
     wrap: function(selector) {
@@ -196,7 +232,7 @@ var ZoomBox = new Class({
         var image = new Asset.image(el.get('href'), {
             onload: function() {
                 if (el == this.current) {
-                    this.zoom(image,el);
+                    this.zoom(image, el);
                 }
             }.bind(this)
         });
@@ -234,7 +270,7 @@ var ZoomBox = new Class({
                 'class': 'zbNext'
                 })
                 .inject(this.caption.getElement('span'))
-                .addEvent('click',function(e) {
+                .addEvent('click', function(e) {
                     var e = new Event(e);
                     e.preventDefault();
                     this.slideTo(image, this.next);
@@ -263,27 +299,7 @@ var ZoomBox = new Class({
             this.prev = null;
         }
 
-        if (this.options.back) {
-
-            if (Browser.Engine.trident4 || !this.backdrop.hasClass('isPinned'))
-                var scroll = window.getScroll();
-            else 
-                var scroll = new Hash({
-                    x: 0,
-                    y: 0
-                });
-
-            this.backdrop.setStyles({
-                'display': 'block',
-                'width': window.getSize().x + 'px',
-                'height': window.getSize().y + 'px',
-                'top': scroll.y + 'px',
-                'left': scroll.x + 'px'
-            })
-            .fade(0.7)
-            .pin()
-            .addClass('isPinned');
-        }
+        this.options.back ? this.backdropShow() : null;
 
     },
 
@@ -314,10 +330,9 @@ var ZoomBox = new Class({
 
     zoom: function(img) {
 
-        if (this.options.keys)
-            this.keys.activate();
+        this.options.keys ? this.keys.activate() : null;
 
-        img.inject(this.loader,'after')
+        img.inject(this.loader, 'after')
             .fade('hide')
             .set('id','zbImage');
 
@@ -343,7 +358,7 @@ var ZoomBox = new Class({
             'left': s.x + (w.x / 2) - (img.get('width') / 2) + 'px'
         }).pin();
 
-        (function(){
+        (function() {
             this.caption.getElement('span').setStyle('display','block');
             this.caption.unpin().setStyles({
                 'width': img.get('width') + 'px',
@@ -405,8 +420,9 @@ var ZoomBox = new Class({
                 img.addEvent('mouseover', function(){
                     this.showCaption(img);
                 }.bind(this));
-            else if (this.options.caption == 2)
-                this.showcaption(img);
+            else if (this.options.caption == 2) {
+                this.showCaption(img);
+            }
 
         }.bind(this)).delay(500);
 
@@ -431,15 +447,8 @@ var ZoomBox = new Class({
 
     close: function(img) {
         
-        if (this.options.back) {
-            this.backdrop.setStyle('display', 'none')
-                .fade('hide')
-                .unpin();
-        }
-
-        if (this.options.keys) {
-            this.keys.deactivate();
-        }
+        this.options.back ? this.backdropHide() : null;
+        this.options.keys ? this.keys.deactivate() : null;
 
         if (this.period) {
             $clear(this.period);
@@ -485,7 +494,7 @@ var ZoomBox = new Class({
 
     },
 
-    showCaption:function(img) {
+    showCaption: function(img) {
 
         if (this.options.caption == 1) {
             this.caption.fade(0.7);
@@ -504,22 +513,22 @@ var ZoomBox = new Class({
             }.bind(this));
 
             this.caption.addEvents({
-                'mouseenter':function(){
+                'mouseenter' : function(){
                     this.caption.fade(0.7);
                     this.closer.fade(0.7);
                 }.bind(this),
-                'mouseleave':function(){
+                'mouseleave' : function(){
                     this.caption.fade(0);
                     this.closer.fade(0);
                 }.bind(this)
             });
 
             this.closer.addEvents({
-                'mouseenter':function(){
+                'mouseenter' : function(){
                     this.closer.fade(0.7);
                     this.caption.fade(0.7);
                 }.bind(this),
-                'mouseleave':function(){
+                'mouseleave' : function(){
                     this.closer.fade(0);
                     this.caption.fade(0);
                 }.bind(this)
@@ -531,7 +540,7 @@ var ZoomBox = new Class({
 
         if (this.options.scroll) {
             var scrollFx = new Fx.Scroll(window);
-            scrollFx.start(0, el.getPosition().y - (window.getSize().y /2 - el.getSize().y/2));
+            scrollFx.start(0, el.getPosition().y - (window.getSize().y / 2 - el.getSize().y / 2));
         }
 
         if (this.period) {
@@ -588,14 +597,14 @@ var ZoomBox = new Class({
                 .pin()
                 .setStyles({
                     'background-image': 'none',
-                    'top': img.getPosition().y
+                    'top' : img.getPosition().y
                            - parseInt(this.loader.getStyle('border-top-width'))
                            + 'px',
-                    'left': img.getPosition().x
+                    'left' : img.getPosition().x
                             - parseInt(this.loader.getStyle('border-left-width'))
                             + 'px',
-                    'width': img.getSize().x + 'px',
-                    'height': img.getSize().y + 'px'
+                    'width' : img.getSize().x + 'px',
+                    'height' : img.getSize().y + 'px'
                 })
                 .fade(0.5)
                 .unpin();
