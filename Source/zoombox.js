@@ -336,26 +336,23 @@ var ZoomBox = new Class({
     },
 
     loading: function(el) {
+    	var anchor = el.getElement('img') ? el.getElement('img') : el,
+    	    pos    = anchor.getPosition(),
+            size   = anchor.getSize(),
+            loader = this.loader;
 
-        if (el.getElement('img')) {
-            var img = el.getElement('img');
-        }
-        else {
-            var img = el;
-        }
-
-        this.loader.setStyles({
-            'top': img.getPosition().y + 'px',
-            'left': img.getPosition().x + 'px',
-            'width': img.getSize().x 
-                     - parseInt(this.loader.getStyle('border-left-width'))
-                     - parseInt(this.loader.getStyle('border-right-width'))
+        loader.setStyles({
+            top    : pos.y,
+            left   : pos.x,
+            width  : size.x 
+                     - parseInt(loader.getStyle('border-left-width'))
+                     - parseInt(loader.getStyle('border-right-width'))
                      + 'px',
-            'height': img.getSize().y
-                      - parseInt(this.loader.getStyle('border-top-width'))
-                      - parseInt(this.loader.getStyle('border-right-width'))
+            height : size.y
+                      - parseInt(loader.getStyle('border-top-width'))
+                      - parseInt(loader.getStyle('border-right-width'))
                       + 'px',
-            'background-image': ''
+            backgroundImage : ''
         })
         .store('el', el)
         .store('caption', el.get('title'))
