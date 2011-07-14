@@ -264,7 +264,7 @@ var ZoomBox = new Class({
         var image = new Asset.image(el.get('href'), {
             onload: function() {
                 if (el == this.current) {
-                    this.zoom(image, el);
+                    this.zoom(el);
                 }
             }.bind(this)
         });
