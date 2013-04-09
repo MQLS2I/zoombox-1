@@ -1,6 +1,6 @@
 ZoomBox
 ===========
-
+looll
 Yes, yet another Lightbox clone. Requires Mootools 1.3.
 
 **Key features:**
