@@ -1,5 +1,6 @@
 ZoomBox
 ===========
+MQLS2I
 looll
 fallou
 Yes, yet another Lightbox clone. Requires Mootools 1.3.
